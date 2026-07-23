@@ -8,7 +8,9 @@ On 2026-07-22 a one-person "Intelligent OS" (the whole operating layer one build
 
 [`prompt.md`](./prompt.md) is a paste-in prompt for Claude Code (best on Fable/Opus, max effort). It inventories what actually exists on your machine, scores the same 12 dimensions with receipts, calibrates against the same reference field, and renders you a dossier of your own.
 
-**Post your scorecard as an [issue](https://github.com/Lucface/intelligent-os-field-audit/issues/new?template=scorecard.md)** — the issue tracker is the leaderboard.
+## The Ledger
+
+[`LEDGER.md`](./LEDGER.md) is the running record of harness shapes: append-only, newest first, never rewritten. Not a leaderboard — nobody wins a scorecard; the interesting part is how differently people build. **Post your scorecard as an [issue](https://github.com/Lucface/intelligent-os-field-audit/issues/new?template=scorecard.md)** and it gets appended.
 
 ## Method rules
 

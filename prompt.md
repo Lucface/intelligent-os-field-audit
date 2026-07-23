@@ -46,6 +46,6 @@ DO, IN ORDER
 7. Ghost mechanic (optional, recommended): if the operator executes a move today, re-run scoring and show GHOST (before) vs NOW (after) rows for the changed dimensions.
 
 Print the scorecard table and verdict in the terminal as well, not only the file.
-Method + reference dossier: https://lucface.github.io/intelligent-os-field-audit/ — you can post your scorecard as a GitHub issue there.
+Method + reference dossier: https://lucface.github.io/intelligent-os-field-audit/ — post your scorecard as a GitHub issue there and it joins the ledger (LEDGER.md), the running record of harness shapes.
 
 ```

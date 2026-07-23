@@ -1,12 +1,13 @@
 ---
-name: My scorecard
-about: Post your Intelligent-OS Field Audit result
-title: "Scorecard: <your handle> — <leads>/12 leads"
-labels: scorecard
+name: Ledger entry
+about: Add your harness to the ledger (the running record of audit scorecards)
+title: "Ledger entry: <your handle> — <your system's name>"
+labels: ledger
 ---
 
 **Date run:**
 **Model used:**
+**Your system, in one line (its shape, not its rank):**
 
 | Dim | Score | Receipt (one line) |
 |-----|-------|--------------------|
