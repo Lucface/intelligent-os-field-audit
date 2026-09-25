@@ -49,3 +49,15 @@ Print the scorecard table and verdict in the terminal as well, not only the file
 Method + reference dossier: https://lucface.github.io/intelligent-os-field-audit/ — post your scorecard as a GitHub issue there and it joins the ledger (LEDGER.md), the running record of harness shapes.
 
 ```
+
+## Re-running the audit (T0/T1 of the Join Protocol)
+
+If this is a re-run of a system already on the ledger, paste the block above unchanged and add these lines at the end of it, inside the same paste:
+
+```
+RE-RUN RULES (Join Protocol, see JOIN-PROTOCOL.md)
+A. This is phase <T0|T1> for builder <handle>. Score only THIS machine. The reference field above stays frozen at its 2026-07-22 values; do not re-verify rivals.
+B. Load the builder's previous ledger row as GHOST. For every dimension print GHOST -> NOW, and a drop is allowed if the receipt says what decayed. Never silently lower; always explain.
+C. If a prediction comment exists for this builder, print predicted vs actual per dimension and name each miss.
+D. Anything adopted from another builder counts only if it has a receipt of its own (a fired canary, a ledger row, a job outcome). Otherwise list it as STAGED and score it as absent.
+```
