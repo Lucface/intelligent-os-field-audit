@@ -42,6 +42,10 @@ Each builder re-runs the identical prompt on their own machine at the end of the
 5. **Cross-grading is encouraged in the merge window.** Once doors are open, the other builder's model reads your T0 dossier and your machine read-only and may contest any score with a receipt. A contested score is recorded as `score (contested: other score, reason)` on the T1 issue. Neither side edits the other's row.
 6. **N/A stays N/A.** Joining does not make an out-of-scope dimension in scope unless the builder decides it does, on the record.
 
+## The head-to-head line (identical goldens)
+
+Rule 3 above keeps each builder's measured dimensions on their own harness. The one number that may be compared across the two systems directly is a golden-set retrieval bench run on both machines with the identical golden file: hit@5 over N questions with known answers, as in the July G-Brain bakeoff. It is reported as its own line at T0 and T1 ("head-to-head: A 19/25, B 17/25") and never folded into a dimension score. The builder who owns the goldens hands the file over at T0; the other builder points the same questions at their own store. A collection that is empty or mid-rebuild at run time is recorded as could_not, not as misses (a lesson from the owner's own series, where four of twelve weekly runs scored one collection 0/4 during an index rebuild).
+
 ## What the ledger records for a join
 
 For each builder: the T0 row, the prediction comment, the T1 row. Beneath the table, one "join delta" paragraph per builder: dimensions moved, predicted vs actual, what was adopted, what was staged and did not count, what dropped and why. Two builders joining produce four rows and two paragraphs. Never rewritten; a correction is a new line.
