@@ -14,6 +14,8 @@ On 2026-07-22 a one-person "Intelligent OS" (the whole operating layer one build
 
 [`JOIN-PROTOCOL.md`](./JOIN-PROTOCOL.md) is for two builders about to open their systems to each other: audit individually with doors closed (T0), pre-register the predicted deltas, merge for a bounded window, re-audit (T1). The ledger records all four rows and the miss between prediction and result.
 
+[`METHOD-CHANGELOG.md`](./METHOD-CHANGELOG.md) versions the bench: v1 is frozen (tag `method-v1`); v2 is a draft open for input on issue #2. A pair's T0 and T1 always use one version.
+
 ## Method rules
 
 1. Receipts before scores — inventory by looking, not by asking.

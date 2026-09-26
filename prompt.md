@@ -1,5 +1,7 @@
 # Intelligent-OS Field Audit v1 — the prompt
 
+**Method v1, frozen 2026-07-22 (tag `method-v1`).** Every entry on the ledger says which method version scored it; a pair's T0 and T1 always share one version. Proposed changes live in [`METHOD-CHANGELOG.md`](./METHOD-CHANGELOG.md) and are adopted only at a fresh T0.
+
 Paste everything below into Claude Code at your system root.
 
 ```
