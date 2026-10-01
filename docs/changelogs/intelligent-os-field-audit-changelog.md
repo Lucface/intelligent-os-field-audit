@@ -1,5 +1,17 @@
 # intelligent-os-field-audit changelog
 
+## 2026-09-30 (evening) | intelligent-os-field-audit · one source for the ledger, a code check on new entries, safe-sharing steps, and entry 003 accepted | 🚀
+
+**Before → After:** accepted entries were typed by hand into LEDGER.md and again into the Studio site, and the two copies had drifted (the site stopped at entry 001) → `ledger.json` is the one record; `scripts/render_ledger.py` generates LEDGER.md and CI fails if anyone edits LEDGER.md by hand. New ledger issues get an automatic comment from `scripts/check_issue.py`: unsafe_extract (a local path, an IP address, a key), needs_fix (a missing row, score, receipt, date or method version) or ready_for_review. The check never accepts anything; the maintainer does. `prompt.md` gained "Sharing a safe extract", the issue template gained method version, phase and a privacy checkbox, and the README names the maintainer and the 7-day review promise.
+
+**Acceptance:** issue #3 (orionarchitekton, Orion estate harness, T0 2026-09-26) was checked ready_for_review, accepted as entry 003 at 20:29 PT, and appeared on sandiegoaistudio.com/projects#ledger at 20:47 PT, 18 minutes later, with no site commit in between.
+
+**Tested:** 23 unittest tests on Python 3.9 and 3.14; a mutation that makes the check quote a matched line turns exactly the three never-quote tests red; CI green on every push.
+
+**Takeaway:** test fixtures in a public repo build any fake home path at runtime; the pre-push leak guard refuses even a made-up one.
+
+**Ref:** commits 6f4a15d, d5dbd3f, 993d2eb, 5d348cb; issue #3 closed by 5d348cb.
+
 ## 2026-09-25 (afternoon) | intelligent-os-field-audit · Re-audit before merging with Dan: Join Protocol written (T0 / prediction / 7-day window / T1), T0 scored 7/12 leads with five stated drops, ledger row 002 + issue #1 + prediction comment, Dan texted twice (session 69bc26f9) | 🎓
 
 **Before → After:** July's dossier was the only baseline and it was two months stale → a public JOIN-PROTOCOL.md (rival rows frozen, drops allowed if stated, predictions on record before any adoption, adopted-but-unexercised counts as staged) and a T0 row scored today from receipts, not architecture.
