@@ -52,6 +52,19 @@ Method + reference dossier: https://lucface.github.io/intelligent-os-field-audit
 
 ```
 
+## Sharing a safe extract
+
+The dossier your AI writes stays on your machine. Nothing in this prompt posts it anywhere, and you never have to share it.
+
+If you want your result on the ledger, share an extract: the scores and one line of receipt per dimension. Before you post, paste this into the same session:
+
+```
+SAFE EXTRACT
+From the dossier you just wrote, produce the text for a ledger issue and nothing else: the date run, the method version (v1), the phase (T0, T1 or none), the model used, one line on the system's shape, and the 12-row table with a one-line receipt per dimension, in the format of .github/ISSUE_TEMPLATE/scorecard.md in this repo. Remove local file paths, hostnames, IP addresses, keys and tokens, and the names of people or client businesses who have not agreed to be named. Describe each in plain words instead ("a private repo", "a client in construction"). Print the text in the terminal. Do not post it anywhere.
+```
+
+Then open a [ledger issue](https://github.com/Lucface/intelligent-os-field-audit/issues/new?template=scorecard.md), paste the text, and read it once more yourself before you submit. A check comments within a few minutes if something looks private or is missing, and Lucas Cooper-Bey reviews the entry within 7 days.
+
 ## Re-running the audit (T0/T1 of the Join Protocol)
 
 If this is a re-run of a system already on the ledger, paste the block above unchanged and add these lines at the end of it, inside the same paste:

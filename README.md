@@ -10,19 +10,30 @@ On 2026-07-22 a one-person "Intelligent OS" (the whole operating layer one build
 
 ## The Ledger
 
-[`LEDGER.md`](./LEDGER.md) is the running record of harness shapes: append-only, newest first, never rewritten. Not a leaderboard — nobody wins a scorecard; the interesting part is how differently people build. **Post your scorecard as an [issue](https://github.com/Lucface/intelligent-os-field-audit/issues/new?template=scorecard.md)** and it gets appended.
+[`LEDGER.md`](./LEDGER.md) is generated from [`ledger.json`](./ledger.json), the one record of accepted entries: append-only, newest first, never rewritten. Not a leaderboard: nobody wins a scorecard; the interesting part is how differently people build. **Post your scorecard as an [issue](https://github.com/Lucface/intelligent-os-field-audit/issues/new?template=scorecard.md)** and the maintainer reviews it within 7 days.
 
 [`JOIN-PROTOCOL.md`](./JOIN-PROTOCOL.md) is for two builders about to open their systems to each other: audit individually with doors closed (T0), pre-register the predicted deltas, merge for a bounded window, re-audit (T1). The ledger records all four rows and the miss between prediction and result.
 
 [`METHOD-CHANGELOG.md`](./METHOD-CHANGELOG.md) versions the bench: v1 is frozen (tag `method-v1`); v2 is a draft open for input on issue #2. A pair's T0 and T1 always use one version.
 
+## Maintainer and review
+
+Maintained by Lucas Cooper-Bey. This repo is the copy that runs: accepted contributions land here and on the [Harness Ledger](https://sandiegoaistudio.com/projects#ledger).
+
+What to expect when you post a ledger entry:
+
+- A check comments on your issue within minutes if a receipt looks private (a file path, an IP address, a key) or something is missing.
+- Lucas reviews every entry within 7 days. An accepted entry is appended to [`ledger.json`](./ledger.json) under the name or handle you chose, and the issue closes with a link to the commit.
+- Cross-grading with another builder is optional (see the Join Protocol).
+- This is voluntary open-source participation under MIT. It creates no role, no pay and no obligation.
+
 ## Method rules
 
-1. Receipts before scores — inventory by looking, not by asking.
-2. Measured beats claimed — a ledger number outranks an architecture that "should" work.
-3. N/A is never zero — out-of-scope-by-design is graded N/A, excluded from lead counts.
-4. No flattery — every trailing dimension is classified CHOSEN (deliberate) or EARNED (real gap + smallest closing artifact).
-5. Zero-regression honesty — re-grades never silently lower a score.
+1. Receipts before scores: inventory by looking, not by asking.
+2. Measured beats claimed: a ledger number outranks an architecture that "should" work.
+3. N/A is never zero: out-of-scope-by-design is graded N/A, excluded from lead counts.
+4. No flattery: every trailing dimension is classified CHOSEN (deliberate) or EARNED (real gap + smallest closing artifact).
+5. Zero-regression honesty: re-grades never silently lower a score.
 
 Scores and rival receipts are date-stamped **2026-07-22** (public repos, release ledgers, published security research). Stars and versions drift fast; the shapes drift slowly. Not affiliated with any of the three projects.
 
