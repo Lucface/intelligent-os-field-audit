@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "updated": "2026-09-30",
+  "maintainer": "Lucas Cooper-Bey",
+  "review_days": 7,
+  "methods": [
+    { "version": "v1", "status": "current", "frozen": "2026-07-22", "tag": "method-v1" },
+    { "version": "v2", "status": "draft", "discussion": "https://github.com/Lucface/intelligent-os-field-audit/issues/2" }
+  ],
+  "dimensions": [
+    { "id": "D1", "short": "Ingress + voice", "full": "Channels a human can reach it through; live voice loop." },
+    { "id": "D2", "short": "Autonomy + scheduling", "full": "Useful work with nobody in the chair, and dead work gets loud." },
+    { "id": "D3", "short": "Memory + provenance", "full": "Can it prove where a fact came from; does history survive updates." },
+    { "id": "D4", "short": "Retrieval, measured", "full": "Hybrid search quality, and whether anyone actually benchmarked it." },
+    { "id": "D5", "short": "Skill library", "full": "Packaged capability, kept trustworthy with linting and install gates." },
+    { "id": "D6", "short": "Self-improvement", "full": "Does it get better on its own, and is that safe." },
+    { "id": "D7", "short": "Evals + dispatch", "full": "Is 'the right capability fired and the output was good' measured or vibes." },
+    { "id": "D8", "short": "Multi-agent", "full": "Fan-out, pipelines, cross-model adjudication, quarantine tiers." },
+    { "id": "D9", "short": "Security", "full": "Injection defense, blast-radius control, secrets, supply chain." },
+    { "id": "D10", "short": "Compute sovereignty", "full": "Local models, own hardware, no single vendor able to switch it off." },
+    { "id": "D11", "short": "Business integration", "full": "Finance, CRM, legal, client delivery, approval-gated publishing." },
+    { "id": "D12", "short": "Ecosystem + momentum", "full": "Who else improves it while the operator sleeps." }
+  ],
+  "entries": [
+    {
+      "n": 1,
+      "date": "2026-07-22",
+      "builder": "Lucas Cooper-Bey",
+      "system": "Lucface IOS (one-person Intelligent OS)",
+      "method": "v1",
+      "phase": null,
+      "scores": [5, 9, 9, 9, 9, 8, 7, 9, 9, 9, 10, 2],
+      "leads": "8/12",
+      "shape": "full-stack institution: provenance + security + business rails deep, voice and ecosystem thin by choice",
+      "receipts": "https://lucface.github.io/intelligent-os-field-audit/",
+      "issue": null,
+      "ghost": { "against": null, "note": "same system scored 7/12 that morning (D7 was 4); the delta is the point of the method." },
+      "note": null,
+      "corrections": []
+    },
+    {
+      "n": 2,
+      "date": "2026-09-25",
+      "builder": "Lucas Cooper-Bey",
+      "system": "Lucface IOS, Join Protocol T0 (pre-merge baseline)",
+      "method": "v1",
+      "phase": "T0",
+      "scores": [6, 9, 8, 8, 9, 7, 7, 9, 8, 9, 9, 2],
+      "leads": "7/12",
+      "shape": "wider and more measured than July, and five scores fell because the re-grade allowed drops: no hash in any spine row, an unwatched retrieval series, undrained proposal queues, untested hooks, a finance snapshot never produced",
+      "receipts": "https://lucface.github.io/intelligent-os-field-audit/ledger/002-lucface-t0-2026-09-25.html",
+      "issue": "https://github.com/Lucface/intelligent-os-field-audit/issues/1",
+      "ghost": { "against": 1, "note": "D1 +1, D3 -1, D4 -1, D6 -1, D9 -1, D11 -1, rest held; leads 8/12 to 7/12." },
+      "note": "Pre-registered T1 prediction: only D9 moves (8 to 9). Join deltas for this pair are appended after T1.",
+      "corrections": [
+        {
+          "at": "2026-09-25T16:40:00-07:00",
+          "dimension": "D11",
+          "score_changed": false,
+          "note": "The D11 receipt said the finance snapshot had never been produced; it exists for 2026-07 and 2026-08 outside the repo by house rule, with the August tail unreviewed (54 of 55 rows). Score stays 9; the reason is replaced."
+        }
+      ]
+    }
+  ]
+}
