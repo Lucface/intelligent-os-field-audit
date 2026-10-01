@@ -1,0 +1,32 @@
+name: ledger issue check
+on:
+  issues:
+    types: [opened, edited, labeled]
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Issue number to check
+        required: true
+        type: number
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: ledger-check-${{ github.event.issue.number || inputs.issue }}
+  cancel-in-progress: true
+jobs:
+  check:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.issue.labels.*.name, 'ledger') ||
+      startsWith(github.event.issue.title, 'Ledger entry')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check the issue and comment
+        run: python3 scripts/check_issue.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue }}
