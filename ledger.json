@@ -60,6 +60,22 @@
           "note": "The D11 receipt said the finance snapshot had never been produced; it exists for 2026-07 and 2026-08 outside the repo by house rule, with the August tail unreviewed (54 of 55 rows). Score stays 9; the reason is replaced."
         }
       ]
+    },
+    {
+      "n": 3,
+      "date": "2026-09-26",
+      "builder": "orionarchitekton",
+      "system": "Orion estate harness",
+      "method": "v1",
+      "phase": "T0",
+      "scores": [6, 8, 7, 4, 8, 6, 4, 8, 6, 7, 6, 3],
+      "leads": "0/12",
+      "shape": "one-person operator harness across four owned nodes: wide and heavily gated, thin on measurement, with most scheduled loops paused by a dated decision",
+      "receipts": "https://github.com/Lucface/intelligent-os-field-audit/issues/3",
+      "issue": "https://github.com/Lucface/intelligent-os-field-audit/issues/3",
+      "ghost": null,
+      "note": "Scored 73 of 120. The dossier is private; full receipts stay on the builder's machine, open read-only to the other builder for cross-grading in the merge window.",
+      "corrections": []
     }
   ]
 }
