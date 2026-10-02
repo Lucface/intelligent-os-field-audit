@@ -1,14 +1,18 @@
 # intelligent-os-field-audit changelog
 
-## 2026-10-02 (early morning) | intelligent-os-field-audit · the entry check catches IPv6 addresses, IPv4 addresses written with leading zeros, and temp-folder paths | 🔒
+## 2026-10-02 (early morning) | intelligent-os-field-audit · the entry check catches IPv6 addresses, IPv4 addresses written with leading zeros or followed by a full stop, and temp-folder paths | 🔒
 
-**Before → After:** the automatic check on a new ledger issue passed three kinds of private detail as `ready_for_review`: an IPv4 address with a leading zero in an octet, any IPv6 address, and a path under a temp folder or the private system folder → all three now give `unsafe_extract`, and the comment still never quotes the matched text. An IPv6 address inside Tailscale's range is named as a Tailscale address, the same way its IPv4 range is.
+**Before → After:** the automatic check on a new ledger issue passed several kinds of private detail as `ready_for_review`: an IPv4 address with a leading zero in an octet, an IPv4 address followed by a full stop or by a dotted port, any IPv6 address (alone, after a label and a colon, or followed by a colon or a port), and a path under a temp folder or the private system folder → each now gives `unsafe_extract`, and the comment still never quotes the matched text. An IPv6 address inside Tailscale's range is named as a Tailscale address, the same way its IPv4 range is.
 
-**Left alone on purpose:** clock times, ratios, two dimension ids joined by a double colon, and a bare double colon in prose. The all-zero IPv6 address identifies no machine, so it is not reported.
+**Left alone on purpose:** clock times, ratios, dimension labels joined by colons, a bare double colon in prose, code identifiers such as a scope path with no digit in it, the all-zero addresses of both families (they name no machine), and the words "private" or "tmp" between slashes inside other text, such as "public/private/archived" or a web address.
 
-**Tested:** 34 unittest tests on Python 3.9 and 3.14. Ten one-line breaks of the check each turn the suite red. The three ledger issues on file keep the verdicts they had.
+**Known and accepted:** a four-part dotted number reads as an IP address, so a four-part version string is reported. A home-folder prefix matches anywhere in a line, including inside a web address. The check prefers a false alarm to a missed leak, and the maintainer still decides.
 
-**Ref:** `scripts/check_issue.py`, `tests/test_check_issue.py`.
+**Two commits:** the first was reviewed after it was pushed. The second closes what that review found, including one hole older than this change: an IPv4 address at the end of a sentence was not matched.
+
+**Tested:** 50 unittest tests on Python 3.9 and 3.14. Twenty-six one-line breaks of the check each turn the suite red. The three ledger issues on file and the accepted ledger text keep their verdicts under the stricter rules.
+
+**Ref:** `scripts/check_issue.py`, `tests/test_check_issue.py`; first commit 885a3e7.
 
 ## 2026-09-30 (evening) | intelligent-os-field-audit · one source for the ledger, a code check on new entries, safe-sharing steps, and entry 003 accepted | 🚀
 

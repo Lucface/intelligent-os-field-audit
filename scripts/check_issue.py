@@ -34,11 +34,14 @@ DIM_IDS = ["D%d" % i for i in range(1, 13)]
 TAILSCALE = ipaddress.ip_network("100.64.0.0/10")
 TAILSCALE_V6 = ipaddress.ip_network("fd7a:115c:a1e0::/48")
 
-LOCAL_PATH = re.compile(r"/Users/|/home/|/tmp/|/private/|\b[A-Za-z]:\\")
-IPV4 = re.compile(r"(?<![\d.])(\d{1,3}(?:\.\d{1,3}){3})(?![\d.])")
-# Hex groups and at least two colons. ipaddress.IPv6Address drops times and ratios.
+# /tmp, /private and /var/folders count only at a path start.
+LOCAL_PATH = re.compile(r"/Users/|/home/|(?<![\w.-])/(?:tmp|private|var/folders)/|\b[A-Za-z]:\\")
+# A full stop or a dotted port may follow the address.
+IPV4 = re.compile(r"(?<![0-9.])([0-9]{1,3}(?:\.[0-9]{1,3}){3})(?![0-9])")
+# Hex groups, two to eight colons. A label colon may sit against the address.
 IPV6 = re.compile(
-    r"(?<![:0-9A-Za-z])((?:[0-9A-Fa-f]{0,4}:){2,7}[0-9A-Fa-f]{0,4})(?![:0-9A-Za-z])"
+    r"(?:(?<![:0-9A-Za-z])|(?<=[0-9A-Za-z]:))"
+    r"((?:[0-9A-Fa-f]{0,4}:){2,8}[0-9A-Fa-f]{0,4})(?![:0-9A-Za-z])"
 )
 _DIMENSION_HEXTET = re.compile(r"D(?:1[0-2]|[1-9])", re.I)
 TOKEN = re.compile(
@@ -86,31 +89,45 @@ def _where(number: int, line: str) -> str:
     return f"{match.group(1)} row" if match else f"line {number}"
 
 
+def _unspecified(address) -> bool:
+    # 0.0.0.0, ::, and an IPv4-mapped 0.0.0.0 name no machine.
+    mapped = getattr(address, "ipv4_mapped", None)
+    return int(address) == 0 or (mapped is not None and int(mapped) == 0)
+
+
 def _ipv4_address(raw: str):
     # int() keeps a leading zero, which ipaddress.ip_address rejects. Skip only an octet above 255.
     numbers = [int(part) for part in raw.split(".")]
     if any(number > 255 for number in numbers):
         return None
-    return ipaddress.IPv4Address(".".join(str(number) for number in numbers))
+    address = ipaddress.IPv4Address(".".join(str(number) for number in numbers))
+    if _unspecified(address):
+        return None
+    return address
 
 
 def _dimension_text(raw: str) -> bool:
-    # IPv6Address accepts two dimension ids joined by :: (D1::D3). In a ledger that is prose.
+    # Dimension ids in colon-separated fields are ledger prose.
     parts = [part for part in raw.split(":") if part]
-    if len(parts) != 2:
-        return False
-    return all(_DIMENSION_HEXTET.fullmatch(part) for part in parts)
+    return bool(parts) and all(_DIMENSION_HEXTET.fullmatch(part) for part in parts)
 
 
 def _ipv6_address(raw: str):
-    # A bare double colon is punctuation in prose, and the all-zero address identifies no machine.
+    # If parsing fails, drop the last colon group once. A leading colon is left in place.
+    parsed = raw
     try:
-        address = ipaddress.IPv6Address(raw)
+        address = ipaddress.IPv6Address(parsed)
     except ValueError:
+        if ":" not in raw:
+            return None
+        parsed = raw.rsplit(":", 1)[0]
+        try:
+            address = ipaddress.IPv6Address(parsed)
+        except ValueError:
+            return None
+    if _unspecified(address) or _dimension_text(parsed):
         return None
-    if address.is_unspecified:
-        return None
-    if _dimension_text(raw):
+    if not any("0" <= ch <= "9" for ch in parsed):
         return None
     return address
 
