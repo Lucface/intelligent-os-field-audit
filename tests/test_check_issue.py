@@ -13,6 +13,19 @@ import check_issue as ci  # noqa: E402
 # (the pre-push leak guard refuses them, 2026-09-30).
 MAC_HOME = "/" + "Users" + "/"
 LINUX_HOME = "/" + "home" + "/"
+TMP_DIR = "/" + "tmp" + "/"
+PRIVATE_DIR = "/" + "private" + "/"
+LEADING_ZERO_TAILSCALE = "100" + ".064.1.1"
+LEADING_ZERO_IP = "192" + ".168.000.001"
+OVERSIZE_OCTET = "192" + ".168.001.256"
+DOC_IPV6 = "2001" + ":db8" + ":" + ":" + "1"
+TAILSCALE_IPV6 = "fd7a" + ":115c" + ":a1e0" + ":" + ":" + "1"
+OUTSIDE_TAILSCALE_IPV6 = "fd7a" + ":115c" + ":a1e1" + ":" + ":" + "1"
+CLOCK_TIME = "12" + ":30"
+RATIO = "3" + ":1"
+DIMENSION_PAIR = "D1" + ":" + ":" + "D3"
+BARE_DOUBLE_COLON = ":" + ":"
+IPV6_LOOPBACK = ":" + ":" + "1"
 
 FIXTURE = (ROOT / "tests" / "fixtures" / "issue-001-as-posted.md").read_text(encoding="utf-8")
 WITH_METHOD = FIXTURE.replace("**Model used:**", "**Method version:** v1\n**Model used:**", 1)
@@ -86,6 +99,95 @@ class CheckIssue(unittest.TestCase):
         # issues #1 and #3 are full of numbers like 0.914 and 0.60 to 0.80
         result = ci.check(replace_receipt(WITH_METHOD, "D4", "hit@5 0.60 to 0.80, p < 0.001, v1.2.3"))
         self.assertEqual(result.verdict, "ready_for_review")
+
+    def test_leading_zero_tailscale_address_is_unsafe_and_never_quoted(self):
+        # source: 2026-09-30 review-gate finding: leading-zero IPv4 was dropped and passed as ready_for_review
+        result = ci.check(replace_receipt(WITH_METHOD, "D10", f"GPU box at {LEADING_ZERO_TAILSCALE} runs whisper"))
+        self.assertEqual(result.verdict, "unsafe_extract")
+        comment = result.comment()
+        self.assertIn("D10 row: looks like a Tailscale address", comment)
+        self.assertNotIn(LEADING_ZERO_TAILSCALE, comment)
+
+    def test_leading_zero_plain_ip_is_unsafe_and_never_quoted(self):
+        # source: 2026-09-30 review-gate finding: leading-zero IPv4 still classifies a plain IP address
+        result = ci.check(replace_receipt(WITH_METHOD, "D8", f"cache at {LEADING_ZERO_IP}"))
+        self.assertEqual(result.verdict, "unsafe_extract")
+        comment = result.comment()
+        self.assertIn("D8 row: looks like an IP address", comment)
+        self.assertNotIn(LEADING_ZERO_IP, comment)
+
+    def test_octet_above_255_is_not_an_ip_address(self):
+        # source: 2026-09-30 review-gate finding: leading-zero IPv4 skips only an octet above 255
+        result = ci.check(replace_receipt(WITH_METHOD, "D8", f"cache at {OVERSIZE_OCTET}"))
+        self.assertEqual(result.verdict, "ready_for_review")
+        self.assertNotIn(OVERSIZE_OCTET, result.comment())
+
+    def test_ipv6_address_is_unsafe_and_never_quoted(self):
+        # source: 2026-09-30 review-gate finding: IPv6 addresses were never detected
+        result = ci.check(replace_receipt(WITH_METHOD, "D6", f"tunnel at {DOC_IPV6}"))
+        self.assertEqual(result.verdict, "unsafe_extract")
+        comment = result.comment()
+        self.assertIn("D6 row: looks like an IP address", comment)
+        self.assertNotIn(DOC_IPV6, comment)
+
+    def test_tailscale_ipv6_address_is_unsafe_and_never_quoted(self):
+        # source: 2026-09-30 review-gate finding: IPv6 inside the Tailscale prefix was never detected
+        result = ci.check(replace_receipt(WITH_METHOD, "D10", f"GPU box at {TAILSCALE_IPV6} runs whisper"))
+        self.assertEqual(result.verdict, "unsafe_extract")
+        comment = result.comment()
+        self.assertIn("D10 row: looks like a Tailscale address", comment)
+        self.assertNotIn(TAILSCALE_IPV6, comment)
+
+    def test_ipv6_outside_tailscale_prefix_is_a_plain_ip(self):
+        # source: 2026-09-30 review-gate finding: IPv6 is a Tailscale address only inside that prefix
+        result = ci.check(replace_receipt(WITH_METHOD, "D10", f"GPU box at {OUTSIDE_TAILSCALE_IPV6} runs whisper"))
+        self.assertEqual(result.verdict, "unsafe_extract")
+        comment = result.comment()
+        self.assertIn("D10 row: looks like an IP address", comment)
+        self.assertNotIn("Tailscale", comment)
+        self.assertNotIn(OUTSIDE_TAILSCALE_IPV6, comment)
+
+    def test_times_ratios_and_dimension_text_are_not_ipv6(self):
+        # source: 2026-09-30 review-gate finding: times, ratios, and dimension text must not match as IPv6
+        result = ci.check(replace_receipt(
+            WITH_METHOD, "D4", f"met at {CLOCK_TIME}, split {RATIO}, see {DIMENSION_PAIR}"))
+        self.assertEqual(result.verdict, "ready_for_review")
+        comment = result.comment()
+        self.assertNotIn(CLOCK_TIME, comment)
+        self.assertNotIn(RATIO, comment)
+        self.assertNotIn(DIMENSION_PAIR, comment)
+
+    def test_bare_double_colon_in_prose_is_not_an_ip_address(self):
+        # source: 2026-10-02 architect review of the leak fix: a bare double colon in prose was reported as an IP address
+        receipt = f"claim {BARE_DOUBLE_COLON} locus, see `{BARE_DOUBLE_COLON}`"
+        result = ci.check(replace_receipt(WITH_METHOD, "D4", receipt))
+        self.assertEqual(result.verdict, "ready_for_review")
+
+    def test_ipv6_loopback_is_still_an_ip_address(self):
+        # source: 2026-10-02 architect review of the leak fix: a bare double colon in prose was reported as an IP address
+        result = ci.check(replace_receipt(WITH_METHOD, "D6", f"tunnel at {IPV6_LOOPBACK}"))
+        self.assertEqual(result.verdict, "unsafe_extract")
+        comment = result.comment()
+        self.assertIn("D6 row: looks like an IP address", comment)
+        self.assertNotIn(IPV6_LOOPBACK, comment)
+
+    def test_tmp_path_is_unsafe_and_never_quoted(self):
+        # source: 2026-09-30 review-gate finding: a temp-directory path was not treated as a local file path
+        path = TMP_DIR + "notes.txt"
+        result = ci.check(replace_receipt(WITH_METHOD, "D4", f"bench notes in {path}"))
+        self.assertEqual(result.verdict, "unsafe_extract")
+        comment = result.comment()
+        self.assertIn("D4 row: looks like a local file path", comment)
+        self.assertNotIn(path, comment)
+
+    def test_private_path_is_unsafe_and_never_quoted(self):
+        # source: 2026-09-30 review-gate finding: a private-directory path was not treated as a local file path
+        path = PRIVATE_DIR + "notes.txt"
+        result = ci.check(replace_receipt(WITH_METHOD, "D4", f"bench notes in {path}"))
+        self.assertEqual(result.verdict, "unsafe_extract")
+        comment = result.comment()
+        self.assertIn("D4 row: looks like a local file path", comment)
+        self.assertNotIn(path, comment)
 
     def test_windows_line_endings_get_the_same_verdict(self):
         # review focus 1: the GitHub web editor posts \r\n

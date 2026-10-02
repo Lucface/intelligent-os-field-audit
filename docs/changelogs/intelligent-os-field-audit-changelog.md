@@ -1,5 +1,15 @@
 # intelligent-os-field-audit changelog
 
+## 2026-10-02 (early morning) | intelligent-os-field-audit · the entry check catches IPv6 addresses, IPv4 addresses written with leading zeros, and temp-folder paths | 🔒
+
+**Before → After:** the automatic check on a new ledger issue passed three kinds of private detail as `ready_for_review`: an IPv4 address with a leading zero in an octet, any IPv6 address, and a path under a temp folder or the private system folder → all three now give `unsafe_extract`, and the comment still never quotes the matched text. An IPv6 address inside Tailscale's range is named as a Tailscale address, the same way its IPv4 range is.
+
+**Left alone on purpose:** clock times, ratios, two dimension ids joined by a double colon, and a bare double colon in prose. The all-zero IPv6 address identifies no machine, so it is not reported.
+
+**Tested:** 34 unittest tests on Python 3.9 and 3.14. Ten one-line breaks of the check each turn the suite red. The three ledger issues on file keep the verdicts they had.
+
+**Ref:** `scripts/check_issue.py`, `tests/test_check_issue.py`.
+
 ## 2026-09-30 (evening) | intelligent-os-field-audit · one source for the ledger, a code check on new entries, safe-sharing steps, and entry 003 accepted | 🚀
 
 **Before → After:** accepted entries were typed by hand into LEDGER.md and again into the Studio site, and the two copies had drifted (the site stopped at entry 001) → `ledger.json` is the one record; `scripts/render_ledger.py` generates LEDGER.md and CI fails if anyone edits LEDGER.md by hand. New ledger issues get an automatic comment from `scripts/check_issue.py`: unsafe_extract (a local path, an IP address, a key), needs_fix (a missing row, score, receipt, date or method version) or ready_for_review. The check never accepts anything; the maintainer does. `prompt.md` gained "Sharing a safe extract", the issue template gained method version, phase and a privacy checkbox, and the README names the maintainer and the 7-day review promise.

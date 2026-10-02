@@ -32,9 +32,15 @@ MAINTAINER = "Lucas Cooper-Bey"
 REVIEW_DAYS = 7
 DIM_IDS = ["D%d" % i for i in range(1, 13)]
 TAILSCALE = ipaddress.ip_network("100.64.0.0/10")
+TAILSCALE_V6 = ipaddress.ip_network("fd7a:115c:a1e0::/48")
 
-LOCAL_PATH = re.compile(r"/Users/|/home/|\b[A-Za-z]:\\")
+LOCAL_PATH = re.compile(r"/Users/|/home/|/tmp/|/private/|\b[A-Za-z]:\\")
 IPV4 = re.compile(r"(?<![\d.])(\d{1,3}(?:\.\d{1,3}){3})(?![\d.])")
+# Hex groups and at least two colons. ipaddress.IPv6Address drops times and ratios.
+IPV6 = re.compile(
+    r"(?<![:0-9A-Za-z])((?:[0-9A-Fa-f]{0,4}:){2,7}[0-9A-Fa-f]{0,4})(?![:0-9A-Za-z])"
+)
+_DIMENSION_HEXTET = re.compile(r"D(?:1[0-2]|[1-9])", re.I)
 TOKEN = re.compile(
     r"\bsk-[A-Za-z0-9_-]{20,}"
     r"|\bgh[pousr]_[A-Za-z0-9]{36,}"
@@ -80,6 +86,40 @@ def _where(number: int, line: str) -> str:
     return f"{match.group(1)} row" if match else f"line {number}"
 
 
+def _ipv4_address(raw: str):
+    # int() keeps a leading zero, which ipaddress.ip_address rejects. Skip only an octet above 255.
+    numbers = [int(part) for part in raw.split(".")]
+    if any(number > 255 for number in numbers):
+        return None
+    return ipaddress.IPv4Address(".".join(str(number) for number in numbers))
+
+
+def _dimension_text(raw: str) -> bool:
+    # IPv6Address accepts two dimension ids joined by :: (D1::D3). In a ledger that is prose.
+    parts = [part for part in raw.split(":") if part]
+    if len(parts) != 2:
+        return False
+    return all(_DIMENSION_HEXTET.fullmatch(part) for part in parts)
+
+
+def _ipv6_address(raw: str):
+    # A bare double colon is punctuation in prose, and the all-zero address identifies no machine.
+    try:
+        address = ipaddress.IPv6Address(raw)
+    except ValueError:
+        return None
+    if address.is_unspecified:
+        return None
+    if _dimension_text(raw):
+        return None
+    return address
+
+
+def _address_kind(address) -> str:
+    network = TAILSCALE_V6 if address.version == 6 else TAILSCALE
+    return "a Tailscale address" if address in network else "an IP address"
+
+
 def leaks(body: str) -> list:
     found = []
     for number, line in enumerate(body.splitlines(), 1):
@@ -87,11 +127,13 @@ def leaks(body: str) -> list:
         if LOCAL_PATH.search(line):
             kinds.append("a local file path")
         for raw in IPV4.findall(line):
-            try:
-                address = ipaddress.ip_address(raw)
-            except ValueError:
-                continue
-            kinds.append("a Tailscale address" if address in TAILSCALE else "an IP address")
+            address = _ipv4_address(raw)
+            if address is not None:
+                kinds.append(_address_kind(address))
+        for raw in IPV6.findall(line):
+            address = _ipv6_address(raw)
+            if address is not None:
+                kinds.append(_address_kind(address))
         if TOKEN.search(line):
             kinds.append("a key or token")
         for kind in dict.fromkeys(kinds):
